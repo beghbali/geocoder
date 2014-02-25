@@ -107,7 +107,7 @@ module Geocoder::Store
       # * +:exclude+         - an object to exclude (used by the +nearbys+ method)
       # * +:distance_column+ - used to set the column name of the calculated distance.
       # * +:bearing_column+  - used to set the column name of the calculated bearing.
-      # * +:min_radius+      - the value to use as the minimum radius. 
+      # * +:min_radius+      - the value to use as the minimum radius.
       #                        ignored if database is sqlite.
       #                        default is 0.0
       #
@@ -125,9 +125,10 @@ module Geocoder::Store
         bearing_column = options.fetch(:bearing_column, 'bearing')
 
         b = Geocoder::Calculations.bounding_box([latitude, longitude], radius, options)
+
         args = b + [
-          full_column_name(geocoder_options[:latitude]),
-          full_column_name(geocoder_options[:longitude])
+          options[:latitude] || full_column_name(geocoder_options[:latitude]),
+          options[:longitude] || full_column_name(geocoder_options[:longitude])
         ]
         bounding_box_conditions = Geocoder::Sql.within_bounding_box(*args)
 
@@ -157,8 +158,8 @@ module Geocoder::Store
         Geocoder::Sql.send(
           method_prefix + "_distance",
           latitude, longitude,
-          full_column_name(geocoder_options[:latitude]),
-          full_column_name(geocoder_options[:longitude]),
+          options[:latitude] || full_column_name(geocoder_options[:latitude]),
+          options[:longitude] || full_column_name(geocoder_options[:longitude]),
           options
         )
       end
@@ -176,8 +177,8 @@ module Geocoder::Store
           Geocoder::Sql.send(
             method_prefix + "_bearing",
             latitude, longitude,
-            full_column_name(geocoder_options[:latitude]),
-            full_column_name(geocoder_options[:longitude]),
+            options[:latitude] || full_column_name(geocoder_options[:latitude]),
+            options[:longitude] || full_column_name(geocoder_options[:longitude]),
             options
           )
         end
